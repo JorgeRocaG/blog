@@ -1,9 +1,19 @@
 import React from "react";
-import useFetch from "../hooks/useFetch";
 import { Link } from "react-router-dom";
+import { useQuery, gql } from "@apollo/client";
+
+const POSTS = gql`
+  query GetPosts {
+    posts {
+      id
+      title
+      body
+    }
+  }
+`;
 
 export default function Home() {
-  const { loading, error, data } = useFetch("http://localhost:1337/posts");
+  const { loading, error, data } = useQuery(POSTS);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error! :(</p>;
@@ -13,7 +23,7 @@ export default function Home() {
   return (
     <div>
       <h1>Home</h1>
-      {data.map((post) => (
+      {data.posts.map((post) => (
         <div key={post.id} className="post-card">
           <h2>{post.title}</h2>
           <p>{post.body.substring(0, 200)}...</p>
